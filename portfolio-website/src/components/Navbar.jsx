@@ -1,43 +1,67 @@
-import React from 'react'
-import { useEffect, useState } from 'react'
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
 const Navbar = () => {
-    const [scrolled, setScrolled] = useState(false);
-    
-    useEffect(()=>{
-        const handleScroll=()=>{
-            if(window.scrollY>50){
-                setScrolled(true);
-            }
-            else{
-                setScrolled(false);
-            }
-        }
-        window.addEventListener("scroll", handleScroll);
-        return () => window.removeEventListener("scroll", handleScroll);
-    },[]);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
     <motion.nav
-        initial={{backgroundColor:"rgba(255,255,255,0)", boxShadow:"0 0 0 rgba(0,0,0,0)"}}
-        animate={{
-            backgroundColor: scrolled? "rgba(255,255,255,1)": "rgba(255,255,255,0)",
-            boxShadow: scrolled ? "0 2px 8px rgba(0,0,0,0.1)" : "0 0 0 rgba(0,0,0,0)",
-        }}
-        transition={{duration:0.4, ease:"easeOut"}}
-        className='fixed top-0 left-0 w-full z-50'
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className={`fixed w-full z-50 top-0 transition-all duration-300 ${
+        isScrolled ? 'bg-white shadow-md' : 'bg-transparent'
+      }`}
     >
-        <div className='max-w-6xl mx-auto px-6 py-4 flex justify-between items-center'>
-            <div className='font-bold text-2xl text-orange-500'>Prashant Pal</div>
-            <div className='space-x-6 text-gray-700'>
-                <a href="#hero" className='hover:text-orange-500 transition'>Home</a>
-                <a href="#projects" className='hover:text-orange-500 transition'>Projects</a>
-                <a href="#about" className='hover:text-orange-500 transition'>About</a>
-                <a href="#contact" className='hover:text-orange-500 transition'> Contact Me</a>
-            </div>
-        </div>
-    </motion.nav>
-  )
-}
+      <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+        <div className="text-2xl font-bold text-orange-500">Prashant</div>
 
-export default Navbar
+        {/* Desktop menu */}
+        <div className="hidden md:flex space-x-8 text-gray-800 font-medium">
+          <a href="#home" className="hover:text-orange-500 transition">Home</a>
+          <a href="#projects" className="hover:text-orange-500 transition">Projects</a>
+          <a href="#contact" className="hover:text-orange-500 transition">Contact</a>
+        </div>
+
+        {/* Mobile menu button */}
+        <div className="md:hidden">
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="focus:outline-none text-orange-500"
+          >
+            {menuOpen ? (
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg> // Close icon (X)
+            ) : (
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg> // Hamburger icon (3 lines)
+            )}
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile menu */}
+      {menuOpen && (
+        <div className="md:hidden bg-white shadow-md">
+          <div className="flex flex-col space-y-4 p-4 text-gray-800 font-medium">
+            <a href="#home" className="hover:text-orange-500" onClick={() => setMenuOpen(false)}>Home</a>
+            <a href="#projects" className="hover:text-orange-500" onClick={() => setMenuOpen(false)}>Projects</a>
+            <a href="#contact" className="hover:text-orange-500" onClick={() => setMenuOpen(false)}>Contact</a>
+          </div>
+        </div>
+      )}
+    </motion.nav>
+  );
+};
+
+export default Navbar;
